@@ -10,7 +10,6 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import StepIndicator from '../components/StepIndicator'
 
 const industries = [
   'Textile',
@@ -29,6 +28,173 @@ const industries = [
   'Other',
 ]
 
+const locations = [
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Chandigarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Lakshadweep',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Puducherry',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+  'Bangalore',
+  'Mumbai',
+  'Delhi',
+  'Hyderabad',
+  'Pune',
+  'Kolkata',
+  'Jaipur',
+  'Ahmedabad',
+  'Kochi',
+  'Indore',
+  'Surat',
+  'Ludhiana',
+  'Tamil Nadu',
+  'Chennai',
+  'Coimbatore',
+  'Salem',
+  'Bhavani',
+  'Mettur',
+  'Sankari',
+  'Attur',
+  'Edappadi',
+  'Yercaud',
+  'Trichy',
+  'Tiruchirapalli',
+  'Srirangam',
+  'Lalgudi',
+  'Manapparai',
+  'Madurai',
+  'Thiruparankundram',
+  'Melur',
+  'Usilampatti',
+  'Erode',
+  'Gobichettipalayam',
+  'Perundurai',
+  'Tiruppur',
+  'Avinashi',
+  'Palladam',
+  'Udumalaipettai',
+  'Pollachi',
+  'Mettupalayam',
+  'Nagercoil',
+  'Kanyakumari',
+  'Marthandam',
+  'Kulasekaram',
+  'Padmanabhapuram',
+  'Theni',
+  'Periyakulam',
+  'Bodinayakanur',
+  'Cumbum',
+  'Dindigul',
+  'Palani',
+  'Oddanchatram',
+  'Batlagundu',
+  'Kallakurichi',
+  'Ulundurpet',
+  'Chinnasalem',
+  'Ariyalur',
+  'Jayankondam',
+  'Chengalpattu',
+  'Tambaram',
+  'Madurantakam',
+  'Kanchipuram',
+  'Sriperumbudur',
+  'Kundrathur',
+  'Ranipet',
+  'Arakkonam',
+  'Walajapet',
+  'Vellore',
+  'Katpadi',
+  'Gudiyatham',
+  'Ambur',
+  'Vaniyambadi',
+  'Tirupattur',
+  'Hosur',
+  'Denkanikottai',
+  'Karur',
+  'Kulithalai',
+  'Namakkal',
+  'Rasipuram',
+  'Tiruchengode',
+  'Villupuram',
+  'Tindivanam',
+  'Kallakkurichi',
+  'Cuddalore',
+  'Neyveli',
+  'Panruti',
+  'Chidambaram',
+  'Vriddachalam',
+  'Perambalur',
+  'Kunnam',
+  'Sivagangai',
+  'Karaikudi',
+  'Devakottai',
+  'Ramanathapuram',
+  'Paramakudi',
+  'Rameswaram',
+  'Pudukkottai',
+  'Aranthangi',
+  'Alangudi',
+  'Tenkasi',
+  'Sankarankovil',
+  'Courtallam',
+  'Virudunagar',
+  'Sivakasi',
+  'Srivilliputhur',
+  'Aruppukkottai',
+  'Krishnagiri',
+  'Dharmapuri',
+  'Harur',
+  'Pennagaram',
+  'Thanjavur',
+  'Kumbakonam',
+  'Pattukkottai',
+  'Mayiladuthurai',
+  'Nagapattinam',
+  'Sirkazhi',
+  'Thiruvarur',
+  'Mannargudi',
+  'Nagore',
+  'Thoothukudi',
+  'Tirunelveli',
+  'Ambasamudram',
+  'Vikramasingapuram',
+  'Rajapalayam',
+  'Udhagamandalam',
+  'Ooty',
+  'Coonoor',
+  'Kotagiri',
+  'Kodaikanal',
+  'Puducherry',
+  'Yanam',
+  'Karaikal',
+  'Mahe',
+]
+
 const inputClass =
   'w-full bg-brand-surface border border-brand-border rounded-xl px-4 py-3 text-brand-text placeholder:text-brand-muted/50 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan/40 transition-all'
 
@@ -41,11 +207,16 @@ export default function InputForm() {
   const [industry, setIndustry] = useState('')
   const [budget, setBudget] = useState('')
   const [locationValue, setLocationValue] = useState('')
+  const [locationOpen, setLocationOpen] = useState(false)
   const [teamSize, setTeamSize] = useState(3)
   const [description, setDescription] = useState('')
   const [interests, setInterests] = useState('')
   const [context, setContext] = useState('')
   const [errors, setErrors] = useState({})
+
+  const filteredLocations = locationValue
+    ? locations.filter((loc) => loc.toLowerCase().includes(locationValue.toLowerCase()))
+    : []
 
   const heading = isHasIdea ? 'Tell us about your idea' : 'Help us find your idea'
   const subtitle = isHasIdea
@@ -70,13 +241,6 @@ export default function InputForm() {
     if (!budget.trim()) nextErrors.budget = 'Budget is required.'
     if (!locationValue.trim()) nextErrors.location = 'Location is required.'
     if (!teamSize) nextErrors.teamSize = 'Team size is required.'
-
-    if (isHasIdea) {
-      if (!description.trim()) nextErrors.description = 'Please describe your idea.'
-    } else {
-      if (!interests.trim()) nextErrors.interests = 'Please share your interests.'
-      if (!context.trim()) nextErrors.context = 'Additional context is required.'
-    }
 
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
@@ -115,8 +279,6 @@ export default function InputForm() {
         <ChevronLeft size={18} />
         Back
       </button>
-
-      <StepIndicator current={3} total={3} />
 
       <div className="text-center mt-8">
         <h1 className="text-4xl font-heading font-bold">{heading}</h1>
@@ -170,6 +332,9 @@ export default function InputForm() {
               setBudget={setBudget}
               locationValue={locationValue}
               setLocationValue={setLocationValue}
+              locationOpen={locationOpen}
+              setLocationOpen={setLocationOpen}
+              filteredLocations={filteredLocations}
               teamSize={teamSize}
               setTeam={setTeam}
               errors={errors}
@@ -177,7 +342,7 @@ export default function InputForm() {
             />
 
             <motion.div variants={fieldVariants} transition={{ duration: 0.25 }} className="mb-1">
-              <label className="text-sm font-medium text-brand-muted mb-1 block">Describe your idea</label>
+              <label className="text-sm font-medium text-brand-muted mb-1 block">Describe your idea <span className="text-brand-muted text-xs">(Optional)</span></label>
               <div className="relative">
                 <textarea
                   rows={4}
@@ -190,13 +355,12 @@ export default function InputForm() {
                   {description.length} / 500 chars
                 </span>
               </div>
-              {errors.description ? <p className="text-xs text-brand-rose mt-1">{errors.description}</p> : null}
             </motion.div>
           </>
         ) : (
           <>
             <motion.div variants={fieldVariants} transition={{ duration: 0.25 }} className="mb-5">
-              <label className="text-sm font-medium text-brand-muted mb-1 block">Your Interests & Passions</label>
+              <label className="text-sm font-medium text-brand-muted mb-1 block">Your Interests & Passions <span className="text-brand-muted text-xs">(Optional)</span></label>
               <textarea
                 rows={3}
                 value={interests}
@@ -204,7 +368,6 @@ export default function InputForm() {
                 placeholder="e.g. sustainability, cooking, tech, education, fitness..."
                 className={inputClass}
               />
-              {errors.interests ? <p className="text-xs text-brand-rose mt-1">{errors.interests}</p> : null}
             </motion.div>
 
             <CommonFields
@@ -212,6 +375,9 @@ export default function InputForm() {
               setBudget={setBudget}
               locationValue={locationValue}
               setLocationValue={setLocationValue}
+              locationOpen={locationOpen}
+              setLocationOpen={setLocationOpen}
+              filteredLocations={filteredLocations}
               teamSize={teamSize}
               setTeam={setTeam}
               errors={errors}
@@ -219,7 +385,7 @@ export default function InputForm() {
             />
 
             <motion.div variants={fieldVariants} transition={{ duration: 0.25 }} className="mb-1">
-              <label className="text-sm font-medium text-brand-muted mb-1 block">Anything else to consider?</label>
+              <label className="text-sm font-medium text-brand-muted mb-1 block">Anything else to consider? <span className="text-brand-muted text-xs">(Optional)</span></label>
               <textarea
                 rows={3}
                 value={context}
@@ -227,7 +393,6 @@ export default function InputForm() {
                 placeholder="Skills your team has, constraints, preferences, or industries to avoid."
                 className={inputClass}
               />
-              {errors.context ? <p className="text-xs text-brand-rose mt-1">{errors.context}</p> : null}
             </motion.div>
           </>
         )}
@@ -252,6 +417,9 @@ function CommonFields({
   setBudget,
   locationValue,
   setLocationValue,
+  locationOpen,
+  setLocationOpen,
+  filteredLocations,
   teamSize,
   setTeam,
   errors,
@@ -277,15 +445,44 @@ function CommonFields({
       <motion.div variants={variants} transition={{ duration: 0.25 }} className="mb-5">
         <label className="text-sm font-medium text-brand-muted mb-1 block">Location</label>
         <div className="relative">
-          <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted" />
+          <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted pointer-events-none" />
           <input
             type="text"
             value={locationValue}
-            onChange={(event) => setLocationValue(event.target.value)}
-            placeholder="City or region, e.g. Chennai"
+            onChange={(event) => {
+              setLocationValue(event.target.value)
+              setLocationOpen(true)
+            }}
+            onFocus={() => setLocationOpen(true)}
+            placeholder="Start typing location (e.g. Ch...)"
             className={`${inputClass} pl-10`}
           />
+          <AnimatePresence>
+            {locationOpen && locationValue && filteredLocations.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="absolute top-full left-0 right-0 mt-1 glass rounded-xl border border-brand-border max-h-48 overflow-y-auto z-20"
+              >
+                {filteredLocations.map((location) => (
+                  <button
+                    key={location}
+                    type="button"
+                    onClick={() => {
+                      setLocationValue(location)
+                      setLocationOpen(false)
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-brand-text hover:bg-brand-cyan/10 transition-colors first:rounded-t-xl last:rounded-b-xl"
+                  >
+                    {location}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+        <p className="text-xs text-brand-muted mt-1">Type any city/town even if it is not in suggestions.</p>
         {errors.location ? <p className="text-xs text-brand-rose mt-1">{errors.location}</p> : null}
       </motion.div>
 

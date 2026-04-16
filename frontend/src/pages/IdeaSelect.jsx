@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, Compass, Lightbulb } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import StepIndicator from '../components/StepIndicator'
 
 export default function IdeaSelect() {
   const navigate = useNavigate()
@@ -10,14 +9,12 @@ export default function IdeaSelect() {
     <main className="min-h-screen py-12 px-4 max-w-5xl mx-auto">
       <button
         type="button"
-        onClick={() => navigate('/mode')}
+        onClick={() => navigate('/')}
         className="inline-flex items-center gap-2 text-brand-muted hover:text-brand-cyan transition-colors"
       >
         <ChevronLeft size={18} />
         Back
       </button>
-
-      <StepIndicator current={1} total={3} />
 
       <div className="text-center mt-8">
         <h1 className="text-4xl font-heading font-bold">How do you want to begin?</h1>
