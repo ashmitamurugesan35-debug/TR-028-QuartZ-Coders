@@ -1,0 +1,8 @@
+{
+  "name": "startup-agent-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "echo \"Add your start command (e.g. vite)\""
+  }
+}
