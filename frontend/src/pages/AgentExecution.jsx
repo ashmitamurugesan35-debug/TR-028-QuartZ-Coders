@@ -169,12 +169,20 @@ export default function AgentExecution() {
 
   useEffect(() => {
     const timers = []
+    const initInterval = 850
+    const activationStart = 4500
+    const activationInterval = 950
+    const conversationStart = 9800
+    const messageStart = 10300
+    const messageInterval = 1700
+    const compilingStart = 17300
+    const outputRevealAt = 18500
 
     for (let i = 0; i < INIT_LINES.length; i += 1) {
       timers.push(
         setTimeout(() => {
           setRevealedInitCount(i + 1)
-        }, i * 600),
+        }, i * initInterval),
       )
     }
 
@@ -182,11 +190,11 @@ export default function AgentExecution() {
       setTimeout(() => {
         setPhase('activation')
         setAgentStatuses(AGENTS.reduce((acc, agent) => ({ ...acc, [agent.id]: 'standby' }), {}))
-      }, 3200),
+      }, activationStart),
     )
 
     AGENTS.forEach((agent, index) => {
-      const activationAt = 3400 + index * 800
+      const activationAt = activationStart + 200 + index * activationInterval
       timers.push(
         setTimeout(() => {
           setAgentStatuses((prev) => ({ ...prev, [agent.id]: 'activating' }))
@@ -202,7 +210,7 @@ export default function AgentExecution() {
     timers.push(
       setTimeout(() => {
         setPhase('conversation')
-      }, 7600),
+      }, conversationStart),
     )
 
     for (let i = 0; i < 5; i += 1) {
@@ -214,14 +222,14 @@ export default function AgentExecution() {
               AGENTS.reduce((acc, agent) => ({ ...acc, [agent.id]: 'done' }), { ...prev }),
             )
           }
-        }, 8000 + i * 1200),
+        }, messageStart + i * messageInterval),
       )
     }
 
     timers.push(
       setTimeout(() => {
         setShowCompiling(true)
-      }, 13500),
+      }, compilingStart),
     )
 
     timers.push(
@@ -230,7 +238,7 @@ export default function AgentExecution() {
         setShowOutput(true)
         setPhase('output')
         outputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }, 14500),
+      }, outputRevealAt),
     )
 
     return () => {
@@ -321,16 +329,14 @@ export default function AgentExecution() {
 
   return (
     <main className="min-h-screen py-12 px-4 max-w-3xl mx-auto">
-      {phase === 'init' ? (
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-brand-muted hover:text-brand-cyan transition-colors"
-        >
-          <ChevronLeft size={18} />
-          Back
-        </button>
-      ) : null}
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="inline-flex items-center gap-2 text-brand-muted hover:text-brand-cyan transition-colors"
+      >
+        <ChevronLeft size={18} />
+        Back
+      </button>
 
       {phase === 'init' ? (
         <div className="glass rounded-2xl p-6 font-mono text-sm space-y-2 max-w-xl mx-auto mt-16">
