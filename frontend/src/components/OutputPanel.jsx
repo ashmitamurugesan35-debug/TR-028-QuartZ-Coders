@@ -17,7 +17,13 @@ const audienceMap = {
   AgriTech: 'Small and medium farmers, agricultural cooperatives',
 }
 
-export default function OutputPanel({ data = {} }) {
+export default function OutputPanel({
+  data = {},
+  analysis = null,
+  analysisStatus = 'idle',
+  analysisError = '',
+  analysisStage = '',
+}) {
   const navigate = useNavigate()
   const {
     industry = 'Emerging',
@@ -51,6 +57,40 @@ export default function OutputPanel({ data = {} }) {
       </AnimatePresence>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        {analysisStatus === 'loading' ? (
+          <section className="md:col-span-2 glass rounded-2xl p-5 border border-brand-cyan/30">
+            <p className="text-brand-cyan font-semibold">Fetching verified backend report...</p>
+            <p className="text-sm text-brand-muted mt-2">Your Architect, Specialist, and Auditor agents are running.</p>
+            {analysisStage ? <p className="text-sm text-brand-text mt-3">{analysisStage}</p> : null}
+          </section>
+        ) : null}
+
+        {analysisStatus === 'error' ? (
+          <section className="md:col-span-2 glass rounded-2xl p-5 border border-brand-rose/30">
+            <p className="text-brand-rose font-semibold">Backend analysis failed</p>
+            <p className="text-sm text-brand-muted mt-2">{analysisError}</p>
+          </section>
+        ) : null}
+
+        {analysisStatus === 'success' && analysis ? (
+          <section className="md:col-span-2 glass rounded-2xl p-5 border border-brand-cyan/30">
+            <div className="flex flex-wrap gap-2 text-xs mb-3">
+              <span className="px-2 py-1 rounded-full bg-brand-cyan/20 text-brand-cyan">
+                Iterations: {analysis.iteration_count ?? 0}
+              </span>
+              <span className="px-2 py-1 rounded-full bg-brand-violet/20 text-brand-violet">
+                Tokens: {analysis.usage_metrics?.total_tokens ?? 0}
+              </span>
+              <span className="px-2 py-1 rounded-full bg-brand-green/20 text-brand-green">
+                Success Score: {analysis.audit_summary?.success_score ?? 0}
+              </span>
+            </div>
+            <pre className="whitespace-pre-wrap text-sm text-brand-text leading-relaxed overflow-x-auto">
+              {analysis.final_report_markdown || 'No report text returned.'}
+            </pre>
+          </section>
+        ) : null}
+
         <section className="md:col-span-2 glass rounded-2xl p-5">
           <div className="flex items-center gap-2 text-brand-muted text-xs uppercase tracking-wider">
             <Lightbulb size={20} className="text-brand-cyan" />
