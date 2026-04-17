@@ -38,6 +38,8 @@ const getAnalysisStages = (location) => [
   'Final verification is compiling the report...',
 ]
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000').replace(/\/$/, '')
+
 function buildClientFallbackReport({ goal, industry, location, budget, teamSize, description }) {
   const budgetNumber = Number(String(budget).replace(/[^\d.]/g, '')) || 50000
   const monthlyRunway = Math.max(1, Math.floor(budgetNumber / 12000))
@@ -263,7 +265,7 @@ export default function AgentExecution() {
           setAnalysisStage(analysisStages[stageIndex])
         }, 1300)
 
-        const response = await fetch('http://127.0.0.1:3000/analyze', {
+        const response = await fetch(`${API_BASE_URL}/analyze`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
